@@ -247,7 +247,14 @@ class AlphaBetaPlayer(IsolationPlayer):
         self.time_left = time_left
 
         # TODO: finish this function!
-        raise NotImplementedError
+        # raise NotImplementedError
+        move = None
+        for i in range(1, 100000):
+            try:
+                move = self.alphabeta(game, depth=i, alpha=float("-inf"), beta=float("inf"))
+            except Exception as e:
+                break
+        return move
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf")):
         """Implement depth-limited minimax search with alpha-beta pruning as
