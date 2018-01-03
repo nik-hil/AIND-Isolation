@@ -299,6 +299,7 @@ class AlphaBetaPlayer(IsolationPlayer):
 
         # TODO: finish this function!
         # raise NotImplementedError
+        # copy of max_value. It returns move
         bestValue = -float('inf')
         bestMove = (-1, -1)
         for move in game.get_legal_moves():
@@ -307,15 +308,13 @@ class AlphaBetaPlayer(IsolationPlayer):
                 bestMove = move
                 bestValue = value
             if bestValue >= beta:
-                break
-
+                return bestMove
             alpha = max(alpha, bestValue)
         return bestMove
 
     def max_value(self, game, depth, alpha, beta, ):
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
-
         if depth == 0:
             return self.score(game, self)
         v = -float('inf')
