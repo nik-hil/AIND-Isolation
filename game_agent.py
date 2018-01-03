@@ -171,50 +171,42 @@ class MinimaxPlayer(IsolationPlayer):
         return best_move
 
     def minimax(self, game, depth):
-        """Implement depth-limited minimax search algorithm as described in
-        the lectures.
-
-        This should be a modified version of MINIMAX-DECISION in the AIMA text.
-        https://github.com/aimacode/aima-pseudocode/blob/master/md/Minimax-Decision.md
-
-        **********************************************************************
-            You MAY add additional methods to this class, or define helper
-                 functions to implement the required functionality.
-        **********************************************************************
-
-        Parameters
-        ----------
-        game : isolation.Board
-            An instance of the Isolation game `Board` class representing the
-            current game state
-
-        depth : int
-            Depth is an integer representing the maximum number of plies to
-            search in the game tree before aborting
-
-        Returns
-        -------
-        (int, int)
-            The board coordinates of the best move found in the current search;
-            (-1, -1) if there are no legal moves
-
-        Notes
-        -----
-            (1) You MUST use the `self.score()` method for board evaluation
-                to pass the project tests; you cannot call any other evaluation
-                function directly.
-
-            (2) If you use any helper functions (e.g., as shown in the AIMA
-                pseudocode) then you must copy the timer check into the top of
-                each helper function or else your agent will timeout during
-                testing.
-        """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
 
         # TODO: finish this function!
-        raise NotImplementedError
+        # return move
+        return self.mm(game, depth, True)[1]
 
+    def mm(self, game, depth,maximizingPlayer):
+        # return value, move
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+
+        if depth == 0:
+            return (self.score(game, self), game.get_player_location(self) )
+        # maximizingPlayer = game.active_player == self
+        if maximizingPlayer:
+            bestValue = float('-inf')
+            bestMove = None
+            for move in game.get_legal_moves():
+                next_game = game.forecast_move(move)
+                v = self.mm(next_game, depth-1, False)[0]
+                bestValue = max(bestValue, v)
+                if bestValue == v:
+                    bestMove = move
+            return bestValue, bestMove
+
+        else :#   (* minimizing player *)
+            bestValue = float('inf')
+            bestMove = None
+            for move in game.get_legal_moves():
+                next_game = game.forecast_move(move)
+                v = self.mm(next_game, depth-1, True)[0]
+                bestValue = min(bestValue, v)
+                if bestValue == v:
+                    bestMove = move
+            return bestValue, bestMove
 
 class AlphaBetaPlayer(IsolationPlayer):
     """Game-playing agent that chooses a move using iterative deepening minimax
