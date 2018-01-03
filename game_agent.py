@@ -298,4 +298,44 @@ class AlphaBetaPlayer(IsolationPlayer):
             raise SearchTimeout()
 
         # TODO: finish this function!
-        raise NotImplementedError
+        # raise NotImplementedError
+        return self._alphabeta(game, depth, alpha, beta, maximizingPlayer=True)[1]
+
+    def _alphabeta(self, game, depth, alpha, beta, maximizingPlayer):
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+
+        if depth == 0 or len(game.get_legal_moves(self)) ==0:
+            return  (self.score(game, self), game.get_player_location(self))
+        
+        bestMove = (-1, -1)
+        if maximizingPlayer:
+            
+            for move in game.get_legal_moves():
+                bestValue = -float("inf")
+                next_game = game.forecast_move(move)
+                value, _move  = self._alphabeta(next_game, depth - 1, alpha, beta, False)
+                bestValue = max(bestValue, value)
+                if value >= bestValue:
+                    bestValue = value
+                    bestMove = move
+                if bestValue >= beta:
+                    return bestValue, bestMove
+                alpha = max(alpha, bestValue)
+                
+            return bestValue, bestMove
+
+        else:
+            for move in game.get_legal_moves():
+                bestValue = float("inf")
+                next_game = game.forecast_move(move)
+                value, _move  = self._alphabeta(next_game, depth - 1, alpha, beta, True)
+                bestValue = min(bestValue, value)
+                if value <= bestValue:
+                    bestValue = value
+                    bestMove = move
+                if bestValue <= alpha:
+                    return bestValue, move
+                beta = min(beta, bestValue)
+                
+            return bestValue, bestMove
