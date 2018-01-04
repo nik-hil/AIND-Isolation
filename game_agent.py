@@ -36,10 +36,9 @@ def custom_score(game, player):
     """
     # TODO: finish this function!
     # raise NotImplementedError
-    s1 =  custom_score_2(game, player)
-    s2 =  custom_score_3(game, player)
-    return s1 if s1>s2 else s2
-
+    my_score = len(game.get_legal_moves(player)) + 1
+    opponent_score = len(game.get_legal_moves(game.get_opponent(player))) + 1
+    return float(my_score/opponent_score) 
 
 def custom_score_2(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -107,8 +106,7 @@ def custom_score_3(game, player):
     opponent_score = len(game.get_legal_moves(game.get_opponent(player)))
     blank_space = len(game.get_blank_spaces())
 
-    return (my_score - opponent_score) *  blank_space
-
+    return float(my_score^2 - opponent_score^2)
 
 
 class IsolationPlayer:
